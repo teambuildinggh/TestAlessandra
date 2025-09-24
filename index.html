@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test de Estilos de Comunicación de Alessandra</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="background"></div>
+    <main class="app-shell">
+      <header class="app-header">
+        <h1>Test de Estilo de Comunicación de Alessandra</h1>
+        <p class="subtitle">
+          Descubre tu estilo predominante respondiendo 18 preguntas simples.
+        </p>
+      </header>
+
+      <section id="welcome-screen" class="card active">
+        <h2>Bienvenida/o</h2>
+        <p>
+          Este test identifica cómo te comunicas según los estilos Sociales,
+          Controladores, Directos e Informativos. Tómate unos minutos para
+          contestar cada pregunta eligiendo la opción que más te describe.
+        </p>
+        <button class="primary" id="start-btn">Comenzar</button>
+      </section>
+
+      <section id="quiz-screen" class="card" aria-live="polite">
+        <div class="progress">
+          <span id="question-counter">Pregunta 1 de 18</span>
+          <button class="ghost" id="back-btn" aria-label="Pregunta anterior">
+            ← Atrás
+          </button>
+        </div>
+        <h2 id="question-text">Pregunta</h2>
+        <div class="options" role="list">
+          <button
+            class="option-card"
+            id="option-a"
+            role="listitem"
+            data-choice="A"
+          ></button>
+          <button
+            class="option-card"
+            id="option-b"
+            role="listitem"
+            data-choice="B"
+          ></button>
+        </div>
+        <div class="navigation">
+          <button class="secondary" id="reset-btn">Reiniciar</button>
+          <button class="primary" id="next-btn">Siguiente</button>
+        </div>
+      </section>
+
+      <section id="result-screen" class="card">
+        <h2>Tu resultado</h2>
+        <p id="result-summary"></p>
+        <div class="chart" role="img" aria-label="Resultado en los cuatro cuadrantes">
+          <div class="axis axis-x"></div>
+          <div class="axis axis-y"></div>
+          <div class="quadrant" data-quadrant="top-left">
+            <span>Paloma</span>
+          </div>
+          <div class="quadrant" data-quadrant="top-right">
+            <span>Pavo Real</span>
+          </div>
+          <div class="quadrant" data-quadrant="bottom-left">
+            <span>Búho</span>
+          </div>
+          <div class="quadrant" data-quadrant="bottom-right">
+            <span>Águila</span>
+          </div>
+          <div class="dot" id="result-dot"></div>
+        </div>
+        <dl class="scores">
+          <div><dt>Sociales (S):</dt><dd id="score-s">0</dd></div>
+          <div><dt>Controladoras (C):</dt><dd id="score-c">0</dd></div>
+          <div><dt>Directas (D):</dt><dd id="score-d">0</dd></div>
+          <div><dt>Informativas (I):</dt><dd id="score-i">0</dd></div>
+        </dl>
+        <button class="primary" id="restart-btn">Realizar nuevamente</button>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
