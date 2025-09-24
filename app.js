@@ -160,6 +160,9 @@ const toggleVisibility = (sectionToShow) => {
   [welcomeScreen, quizScreen, resultScreen].forEach((section) => {
     section.classList.toggle('active', section === sectionToShow);
   });
+  if (sectionToShow !== resultScreen) {
+    detailModalBody.innerHTML = '';
+  }
 };
 
 const renderQuestion = () => {
@@ -254,14 +257,11 @@ const renderResults = () => {
   });
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-  const horizontalPercent = clamp(horizontal / MAX_AXIS, -1, 1);
-  const verticalPercent = clamp(vertical / MAX_AXIS, -1, 1);
+  const normalizedHorizontal = clamp((horizontal + MAX_AXIS) / (MAX_AXIS * 2), 0, 1);
+  const normalizedVertical = clamp((MAX_AXIS - vertical) / (MAX_AXIS * 2), 0, 1);
 
-  const left = 50 + horizontalPercent * 42;
-  const top = 50 - verticalPercent * 42;
-
-  resultDot.style.left = `${left}%`;
-  resultDot.style.top = `${top}%`;
+  resultDot.style.left = `${normalizedHorizontal * 100}%`;
+  resultDot.style.top = `${normalizedVertical * 100}%`;
 
   resultSummary.textContent = style.title;
 
@@ -285,10 +285,17 @@ const renderResults = () => {
     <div class="detail-summary">
       <p><strong>Animal resultante:</strong> ${style.title}</p>
       <p><strong>Descripción:</strong> ${style.description}</p>
-      <p><strong>Totales por estilo:</strong> S = ${scores.S} | C = ${scores.C} | D = ${scores.D} | I = ${scores.I}</p>
+    </div>
+    <div class="scores" role="list">
+      <div role="listitem"><span>Social (S)</span><strong>${scores.S}</strong></div>
+      <div role="listitem"><span>Control (C)</span><strong>${scores.C}</strong></div>
+      <div role="listitem"><span>Directo (D)</span><strong>${scores.D}</strong></div>
+      <div role="listitem"><span>Informativo (I)</span><strong>${scores.I}</strong></div>
+    </div>
+    <div class="detail-summary calculations">
       <p><strong>Cálculo vertical (S - C):</strong> ${scores.S} - ${scores.C} = ${vertical}</p>
       <p><strong>Cálculo horizontal (D - I):</strong> ${scores.D} - ${scores.I} = ${horizontal}</p>
-      <p><strong>Coordenadas (horizontal, vertical):</strong> (${horizontal}, ${vertical})</p>
+      <p><strong>Coordenadas finales:</strong> (${horizontal}, ${vertical})</p>
       <p><strong>Ubicación del punto:</strong> ${quadrantDescription}</p>
     </div>
   `;
