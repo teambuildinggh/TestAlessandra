@@ -16,30 +16,25 @@
     <div class="background"></div>
     <main class="app-shell">
       <header class="app-header">
-        <h1>Test de Estilo de Comunicación de Alessandra</h1>
-        <p class="subtitle">
-          Descubre tu estilo predominante respondiendo 18 preguntas simples.
-        </p>
+        <h1>Test de Alessandra</h1>
       </header>
 
       <section id="welcome-screen" class="card active">
-        <h2>Bienvenida/o</h2>
-        <p>
-          Este test identifica cómo te comunicas según los estilos Sociales,
-          Controladores, Directos e Informativos. Tómate unos minutos para
-          contestar cada pregunta eligiendo la opción que más te describe.
-        </p>
+        <h2>Test de Alessandra</h2>
+        <p>Contarás con opciones y deberás presionar sobre la que sientas mayor identificación.</p>
+        <p>¡Al finalizar el Test visualizarás los resultados!</p>
         <button class="primary" id="start-btn">Comenzar</button>
       </section>
 
       <section id="quiz-screen" class="card" aria-live="polite">
+        <h2 class="section-title">Test de Alessandra</h2>
         <div class="progress">
           <span id="question-counter">Pregunta 1 de 18</span>
           <button class="ghost" id="back-btn" aria-label="Pregunta anterior">
             ← Atrás
           </button>
         </div>
-        <h2 id="question-text">Pregunta</h2>
+        <p id="question-text" class="question-intro">¿Cuál opción te describe mejor?</p>
         <div class="options" role="list">
           <button
             class="option-card"
@@ -61,9 +56,31 @@
       </section>
 
       <section id="result-screen" class="card">
-        <h2>Tu resultado</h2>
-        <p id="result-summary"></p>
+        <h2>Resultados del Test de Alessandra</h2>
+        <p id="result-summary" class="result-highlight"></p>
         <div class="chart" role="img" aria-label="Resultado en los cuatro cuadrantes">
+          <div class="grid-labels grid-labels-y">
+            <span>+9</span>
+            <span>+6</span>
+            <span>+3</span>
+            <span>0</span>
+            <span>-3</span>
+            <span>-6</span>
+            <span>-9</span>
+          </div>
+          <div class="grid-labels grid-labels-x">
+            <span>-9</span>
+            <span>-6</span>
+            <span>-3</span>
+            <span>0</span>
+            <span>+3</span>
+            <span>+6</span>
+            <span>+9</span>
+          </div>
+          <div class="axis-label axis-label-top">S (+)</div>
+          <div class="axis-label axis-label-bottom">C (+)</div>
+          <div class="axis-label axis-label-left">I (+)</div>
+          <div class="axis-label axis-label-right">D (+)</div>
           <div class="axis axis-x"></div>
           <div class="axis axis-y"></div>
           <div class="quadrant" data-quadrant="top-left">
@@ -80,15 +97,18 @@
           </div>
           <div class="dot" id="result-dot"></div>
         </div>
-        <dl class="scores">
-          <div><dt>Sociales (S):</dt><dd id="score-s">0</dd></div>
-          <div><dt>Controladoras (C):</dt><dd id="score-c">0</dd></div>
-          <div><dt>Directas (D):</dt><dd id="score-d">0</dd></div>
-          <div><dt>Informativas (I):</dt><dd id="score-i">0</dd></div>
-        </dl>
+        <button class="secondary" id="detail-btn">Detalle de los Resultados</button>
         <button class="primary" id="restart-btn">Realizar nuevamente</button>
       </section>
     </main>
+    <div class="modal" id="detail-modal" aria-hidden="true" role="dialog" aria-labelledby="detail-modal-title">
+      <div class="modal-backdrop" id="detail-modal-backdrop"></div>
+      <div class="modal-content">
+        <button class="modal-close" id="detail-close-btn" aria-label="Cerrar detalle">×</button>
+        <h3 id="detail-modal-title">Detalle de los Resultados</h3>
+        <div id="detail-modal-body"></div>
+      </div>
+    </div>
     <script src="app.js"></script>
   </body>
 </html>

@@ -4,10 +4,11 @@
   --card-border: rgba(255, 255, 255, 0.45);
   --card-shadow: 0 20px 40px rgba(15, 76, 117, 0.25);
   --text-color: #f8fbff;
-  --accent: #ff6b6b;
-  --accent-hover: #ff8787;
+  --accent: #3fbf7f;
+  --accent-hover: #65d39a;
   --secondary: rgba(255, 255, 255, 0.65);
   --quadrant-highlight: rgba(255, 255, 255, 0.12);
+  --dot-glow: rgba(63, 191, 127, 0.35);
   font-size: 16px;
 }
 
@@ -26,6 +27,10 @@ body {
   align-items: center;
   background: var(--bg-gradient);
   overflow-x: hidden;
+}
+
+body.modal-open {
+  overflow: hidden;
 }
 
 .background {
@@ -102,7 +107,7 @@ button:disabled {
   background: var(--accent);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 10px 25px rgba(63, 191, 127, 0.3);
 }
 
 .primary:hover,
@@ -137,9 +142,14 @@ button:disabled {
   color: var(--secondary);
 }
 
-#quiz-screen h2 {
+.section-title {
   font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.card .question-intro {
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .options {
@@ -197,16 +207,96 @@ button:disabled {
   align-items: center;
 }
 
+.card .result-highlight {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  color: #ffffff;
+}
+
 .chart {
   position: relative;
   width: min(420px, 85vw);
   height: min(420px, 85vw);
   margin: 2rem auto;
   border-radius: 40px;
-  background: rgba(255, 255, 255, 0.16);
+  background:
+      repeating-linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.14) 0,
+        rgba(255, 255, 255, 0.14) 1px,
+        transparent 1px,
+        transparent calc(100% / 6)
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.14) 0,
+        rgba(255, 255, 255, 0.14) 1px,
+        transparent 1px,
+        transparent calc(100% / 6)
+      ),
+      rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
   overflow: hidden;
+}
+
+.grid-labels {
+  position: absolute;
+  display: flex;
+  z-index: 2;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.grid-labels-y {
+  flex-direction: column;
+  justify-content: space-between;
+  left: 1.75rem;
+  top: 1.5rem;
+  bottom: 1.5rem;
+}
+
+.grid-labels-x {
+  justify-content: space-between;
+  left: 2rem;
+  right: 2rem;
+  bottom: 1rem;
+}
+
+.axis-label {
+  position: absolute;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 1px;
+}
+
+.axis-label-top {
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.axis-label-bottom {
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.axis-label-left {
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+}
+
+.axis-label-right {
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: center;
 }
 
 .axis {
@@ -232,14 +322,15 @@ button:disabled {
   width: 50%;
   height: 50%;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 1rem;
-  color: rgba(255, 255, 255, 0.75);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1.25rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  letter-spacing: 0.5px;
   transition: background 0.4s ease, color 0.4s ease;
+  pointer-events: none;
 }
 
 .quadrant[data-quadrant='top-left'] {
@@ -250,20 +341,16 @@ button:disabled {
 .quadrant[data-quadrant='top-right'] {
   top: 0;
   right: 0;
-  justify-content: flex-end;
 }
 
 .quadrant[data-quadrant='bottom-left'] {
   bottom: 0;
   left: 0;
-  align-items: flex-end;
 }
 
 .quadrant[data-quadrant='bottom-right'] {
   bottom: 0;
   right: 0;
-  align-items: flex-end;
-  justify-content: flex-end;
 }
 
 .quadrant.active {
@@ -277,11 +364,117 @@ button:disabled {
   height: 20px;
   background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 0 6px rgba(255, 107, 107, 0.25);
+  box-shadow: 0 0 0 6px var(--dot-glow);
   transform: translate(-50%, -50%);
   transition: top 0.6s cubic-bezier(0.22, 1, 0.36, 1),
     left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 3;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: rgba(10, 20, 35, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 99;
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.modal-content {
+  position: relative;
+  width: min(720px, 90vw);
+  max-height: 85vh;
+  background: rgba(9, 22, 38, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  border-radius: 24px;
+  padding: 2rem;
+  overflow-y: auto;
+  backdrop-filter: blur(24px);
+}
+
+.modal-content h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.modal-close:hover,
+.modal-close:focus-visible {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+#detail-modal-body {
+  display: grid;
+  gap: 1.25rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.detail-summary {
+  display: grid;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.detail-summary strong {
+  color: #ffffff;
+}
+
+.detail-grid {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.detail-grid thead {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.detail-grid th,
+.detail-grid td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  word-break: break-word;
+}
+
+.detail-grid tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .scores {
@@ -327,5 +520,18 @@ button:disabled {
     flex-direction: column;
     gap: 0.75rem;
     align-items: flex-start;
+  }
+
+  .grid-labels-y {
+    left: 1rem;
+  }
+
+  .grid-labels-x {
+    left: 1.5rem;
+    right: 1.5rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
   }
 }
