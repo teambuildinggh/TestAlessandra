@@ -135,11 +135,33 @@ const scoreD = document.getElementById('score-d');
 const scoreI = document.getElementById('score-i');
 
 const quadrants = document.querySelectorAll('.quadrant');
+const detailBtn = document.getElementById('detail-btn');
+const detailModal = document.getElementById('detail-modal');
+const detailModalBody = document.getElementById('detail-modal-body');
+const detailCloseBtn = document.getElementById('detail-close-btn');
+const detailBackdrop = document.getElementById('detail-modal-backdrop');
 
 let currentQuestion = 0;
 let answers = new Array(questions.length).fill(null);
 
+const closeDetailModal = () => {
+  detailModal.classList.remove('active');
+  detailModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+};
+
+const openDetailModal = () => {
+  if (!detailModalBody.innerHTML.trim()) return;
+  detailModal.classList.add('active');
+  detailModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+  if (detailCloseBtn) {
+    detailCloseBtn.focus();
+  }
+};
+
 const toggleVisibility = (sectionToShow) => {
+  closeDetailModal();
   [welcomeScreen, quizScreen, resultScreen].forEach((section) => {
     section.classList.toggle('active', section === sectionToShow);
   });
@@ -217,12 +239,20 @@ const summarizeStyle = (quadrant) => {
   }
 };
 
+const quadrantDescriptions = {
+  'top-right': 'Cuadrante superior derecho (Pavo Real)',
+  'bottom-right': 'Cuadrante inferior derecho (Águila)',
+  'top-left': 'Cuadrante superior izquierdo (Paloma)',
+  'bottom-left': 'Cuadrante inferior izquierdo (Búho)',
+};
+
 const renderResults = () => {
   const scores = calculateScores();
   const vertical = scores.S - scores.C;
   const horizontal = scores.D - scores.I;
   const quadrant = determineQuadrant(horizontal, vertical);
   const style = summarizeStyle(quadrant);
+  const quadrantDescription = quadrantDescriptions[quadrant];
 
   quadrants.forEach((quad) => {
     quad.classList.toggle('active', quad.dataset.quadrant === quadrant);
@@ -238,12 +268,56 @@ const renderResults = () => {
   resultDot.style.left = `${left}%`;
   resultDot.style.top = `${top}%`;
 
-  resultSummary.innerHTML = `<strong>${style.title}</strong>: ${style.description}`;
+  resultSummary.textContent = style.title;
 
   scoreS.textContent = scores.S;
   scoreC.textContent = scores.C;
   scoreD.textContent = scores.D;
   scoreI.textContent = scores.I;
+
+  const detailRows = questions
+    .map((question, index) => {
+      const choice = answers[index];
+      const styleType = choice === 'A' ? question.typeA : question.typeB;
+      const responseText = choice === 'A' ? question.text : question.alt;
+      return `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${choice}</td>
+          <td>${styleType}</td>
+          <td>${responseText}</td>
+        </tr>
+      `;
+    })
+    .join('');
+
+  const detailSummary = `
+    <div class="detail-summary">
+      <p><strong>Animal resultante:</strong> ${style.title}</p>
+      <p><strong>Descripción:</strong> ${style.description}</p>
+      <p><strong>Totales por estilo:</strong> S = ${scores.S} | C = ${scores.C} | D = ${scores.D} | I = ${scores.I}</p>
+      <p><strong>Cálculo vertical (S - C):</strong> ${scores.S} - ${scores.C} = ${vertical}</p>
+      <p><strong>Cálculo horizontal (D - I):</strong> ${scores.D} - ${scores.I} = ${horizontal}</p>
+      <p><strong>Coordenadas (horizontal, vertical):</strong> (${horizontal}, ${vertical})</p>
+      <p><strong>Ubicación del punto:</strong> ${quadrantDescription}</p>
+    </div>
+  `;
+
+  const detailTable = `
+    <table class="detail-grid">
+      <thead>
+        <tr>
+          <th>Pregunta</th>
+          <th>Letra</th>
+          <th>Estilo</th>
+          <th>Respuesta seleccionada</th>
+        </tr>
+      </thead>
+      <tbody>${detailRows}</tbody>
+    </table>
+  `;
+
+  detailModalBody.innerHTML = `${detailSummary}${detailTable}`;
 };
 
 const goToQuestion = (index) => {
@@ -297,6 +371,15 @@ restartBtn.addEventListener('click', () => {
   });
 });
 
+detailBtn.addEventListener('click', openDetailModal);
+detailCloseBtn.addEventListener('click', closeDetailModal);
+detailBackdrop.addEventListener('click', closeDetailModal);
+detailModal.addEventListener('click', (event) => {
+  if (event.target === detailModal) {
+    closeDetailModal();
+  }
+});
+
 window.addEventListener('keydown', (event) => {
   if (!quizScreen.classList.contains('active')) return;
   if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') {
@@ -304,5 +387,11 @@ window.addEventListener('keydown', (event) => {
   }
   if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') {
     backBtn.click();
+  }
+});
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && detailModal.classList.contains('active')) {
+    closeDetailModal();
   }
 });
