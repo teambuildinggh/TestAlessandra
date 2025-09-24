@@ -294,7 +294,7 @@ const renderResults = () => {
   const detailSummary = `
     <div class="detail-summary">
       <p><strong>Animal resultante:</strong> ${style.title}</p>
-      <p><strong>Descripción:</strong> ${style.description}</p>
+      <p>${style.description}</p>
       <p><strong>Totales por estilo:</strong> S = ${scores.S} | C = ${scores.C} | D = ${scores.D} | I = ${scores.I}</p>
       <p><strong>Cálculo vertical (S - C):</strong> ${scores.S} - ${scores.C} = ${vertical}</p>
       <p><strong>Cálculo horizontal (D - I):</strong> ${scores.D} - ${scores.I} = ${horizontal}</p>
